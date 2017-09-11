@@ -11,7 +11,12 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var imageView: UIImageView!
+    // 再生と停止
     @IBOutlet weak var slideActionButton: UIButton!
+    
+    @IBOutlet weak var nextActionButton: UIButton!
+    
+    @IBOutlet weak var backActionButton: UIButton!
     
     // segueを使用して戻って来た値を格納する変数
     var imageName: String = ""
@@ -62,10 +67,18 @@ class ViewController: UIViewController {
         if slideActionButton.currentTitle! == "再生" {
             slideActionButton.setTitle("停止", for: UIControlState.normal)
             timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(nextButton), userInfo: nil, repeats: true)
+            buttonEnable(false)
         }else if slideActionButton.currentTitle! == "停止" {
             slideActionButton.setTitle("再生", for: UIControlState.normal)
             timer.invalidate()
+            buttonEnable(true)
         }
+    }
+    
+    func buttonEnable( _ mode: Bool) {
+        print(mode)
+        nextActionButton.isEnabled = mode
+        backActionButton.isEnabled = mode
     }
     
     // 進むボタン押した際
@@ -76,11 +89,14 @@ class ViewController: UIViewController {
     
     // 画像がタップされた際
     @IBAction func tapImage(_ sender: Any) {
+        slideActionButton.setTitle("再生", for: UIControlState.normal)
+        timer?.invalidate()
         performSegue(withIdentifier: "enlargedImage", sender: nil)
     }
     
         // 遷移で戻って来た際
     @IBAction func unwind(_ segue: UIStoryboardSegue) {
+        buttonEnable(true)
         name = imageNameArray[selectImgNum]!
         let backImg = UIImage(named: name)!
         imageView.image = backImg
